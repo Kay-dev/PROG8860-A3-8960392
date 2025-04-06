@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     echo 'Building the application...'
-                    sh 'npm install'
+                    powershell 'npm install'
                 }
             }
         }
@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests...'
-                    sh 'npm test'
+                    powershell 'npm test'
                 }
             }
         }
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     echo 'Packaging the application...'
-                    sh 'zip -r function.zip function package.json'
+                    powershell 'Compress-Archive -Path "src\functions\*", "package.json" -DestinationPath function.zip -Force'
                 }
             }
         }
@@ -40,9 +40,9 @@ pipeline {
                 script {
                     echo 'Deploying to Azure...'
                     withCredentials([azureServicePrincipal('Azure_Credential')]) {
-                        sh '''
-                            az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
-                            az functionapp deployment source config-zip --resource-group $RESOURCE_GROUP --name $FUNCTION_APP_NAME --src function.zip
+                        powershell '''
+                            az login --service-principal -u $env:AZURE_CLIENT_ID -p $env:AZURE_CLIENT_SECRET --tenant $env:AZURE_TENANT_ID
+                            az functionapp deployment source config-zip --resource-group $env:RESOURCE_GROUP --name $env:FUNCTION_APP_NAME --src function.zip
                         '''
                     }
                 }
