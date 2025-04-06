@@ -49,7 +49,7 @@ pipeline {
                     withCredentials([azureServicePrincipal('Azure_Credential')]) {
                         powershell '''
                             az login --service-principal -u $env:AZURE_CLIENT_ID -p $env:AZURE_CLIENT_SECRET --tenant $env:AZURE_TENANT_ID
-                            az functionapp deployment source config-zip --resource-group "${env.RESOURCE_GROUP}" --name "${env.FUNCTION_APP_NAME}" --src function.zip
+                            az functionapp deployment source config-zip --resource-group $env:RESOURCE_GROUP --name $env:FUNCTION_APP_NAME --src function.zip
                         '''
                     }
                 }
